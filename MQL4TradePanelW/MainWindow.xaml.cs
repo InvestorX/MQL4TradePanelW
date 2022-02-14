@@ -151,8 +151,6 @@ namespace MQL4TradePanelW
                     buyBtn.Content = buytextBlock;
 
 
-
-
                 });
             }
             catch (Exception ex)
@@ -164,12 +162,11 @@ namespace MQL4TradePanelW
         private String getMemorryString(String TAG)
         {
             String ans = "";
-            MemoryMappedFile mmf = MemoryMappedFile.OpenExisting(TAG);
-            Thread.Sleep(100);
-            MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(0, 0, MemoryMappedFileAccess.Read);
             try
             {
 
+                MemoryMappedFile mmf = MemoryMappedFile.OpenExisting(TAG);
+                MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(0, 0, MemoryMappedFileAccess.Read);
 
                 char[] data = new char[256];
                 int readsize = accessor.ReadArray<char>(0, data, 0, 256);
