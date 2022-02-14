@@ -30,14 +30,14 @@
         <local:SellButton x:Name="sellBtn"  Margin="20,141,0,0" 
                           VerticalAlignment="Top" HorizontalAlignment="Left" 
                           FontSize="18" RenderTransformOrigin="0.526,0.546" Width="120" Height="67" Click="sellBtn_Click" >
-            <TextBlock TextAlignment="Right">
+            <TextBlock TextAlignment="Right" x:Name="selltextBlock">
                 <Span FontSize="16" Foreground="White"><Underline>SELL</Underline></Span>
             <LineBreak /><!-- 改行もできます -->
             105.<Span FontSize="24" Foreground="Black">67</Span>9
             </TextBlock>
         </local:SellButton>
         <local:BuyButton x:Name="buyBtn" Margin="220,141,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" RenderTransformOrigin="0.526,0.546" Width="120" Height="67" >
-            <TextBlock TextAlignment="Left">
+            <TextBlock x:Name="buytextBlock" TextAlignment="Left">
                 <Span FontSize="16" Foreground="White"><Underline>Buy</Underline></Span>
             <LineBreak /><!-- 改行もできます -->
             105.<Span FontSize="24" Foreground="Black">87</Span>9
@@ -93,7 +93,16 @@
         </CheckBox>
         <Label Content="pips" Margin="199,369,0,0" FontSize="18" Height="34" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
         <Label Content="注文時設定" Margin="22,302,0,0" FontSize="18" HorizontalAlignment="Left" Width="126" Height="34" VerticalAlignment="Top"/>
-        <TextBlock x:Name="mt4Status" HorizontalAlignment="Left" Margin="184,19,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top"/>
+
+        <Border CornerRadius="4" Background="#FFF17272" x:Name="statusBorder"  HorizontalAlignment="Left" Margin="184,19,0,0" VerticalAlignment="Top">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="6" Direction="-90" RenderingBias="Quality" ShadowDepth="0"/>
+            </Border.Effect>
+            <TextBlock x:Name="mt4Status" FontSize="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="TextBlock" TextWrapping="Wrap">
+                            <ContentPresenter></ContentPresenter>
+            </TextBlock>
+        </Border>
+
     </Grid>
 
 </Window>
