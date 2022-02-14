@@ -5,38 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MQL4TradePanelW"
         mc:Ignorable="d"
-        Title="激速注文 for MetaTrader @InvestorX" Height="480" Width="360">
+        Title="激速注文 for MetaTrader @InvestorX" Height="480" Width="368" MouseDown="Window_MouseDown" Loaded="Window_Loaded">
     <Grid Margin="0,0,0,0">
-        <ComboBox x:Name="comboBox" HorizontalAlignment="Center" Margin="0,44,0,0" VerticalAlignment="Top" Width="319" Height="22"/>
-        <Label x:Name="label" Content="取引数量(Lots)" Margin="21,71,0,0" FontSize="18" HorizontalAlignment="Left" Width="155" Height="34" VerticalAlignment="Top"/>
-        <local:OtherButton x:Name="lotsDown" Content="▼" HorizontalAlignment="Left" Margin="175,74,0,0" VerticalAlignment="Top" FontSize="18" Height="28" Width="22"/>
-        <local:OtherButton x:Name="lotsUp" Content="▲" Margin="257,74,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Height="28" Width="22" RenderTransformOrigin="0.526,0.546"/>
-        <TextBox x:Name="lots" Margin="202,75,0,0" Text="50" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Width="50" Height="26" Grid.ColumnSpan="2">
-
-        </TextBox>
-        <Popup IsOpen="True" PlacementTarget="{Binding ElementName=lots}" Placement="Bottom" Grid.ColumnSpan="2">
-            <StackPanel Orientation="Vertical">
+        <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="20,44,0,0" VerticalAlignment="Top" Width="320" Height="22" Grid.ColumnSpan="2"/>
+        <Label x:Name="label" Content="取引数量(Lots)" Margin="21,71,0,0" FontSize="18" HorizontalAlignment="Left" Width="155" Height="34" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <local:OtherButton x:Name="lotsDown" Content="▼" HorizontalAlignment="Left" Margin="169,74,0,0" VerticalAlignment="Top" FontSize="18" Height="28" Width="22"/>
+        <local:OtherButton x:Name="lotsUp" Content="▲" Margin="258,74,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Height="28" Width="22" RenderTransformOrigin="0.591,0.537"/>
+        <TextBox x:Name="lots" Margin="199,75,0,0" Text="50" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Width="50" Height="26" PreviewMouseDown="lots_PreviewMouseDown" PreviewMouseUp="lots_PreviewMouseUp"/>
+        <Popup x:Name="popupLots" IsOpen="False" PlacementTarget="{Binding ElementName=lots}" Placement="Bottom" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Vertical" Background="White">
                 <StackPanel Orientation="Horizontal">
-                    <local:OtherButton x:Name="p1" Content="+1" FontSize="18" Width="40" Margin="4,4,4,4"/>
-                    <local:OtherButton x:Name="p5" Content="+5" FontSize="18" Width="40" Margin="4,4,4,4"/>
-                    <local:OtherButton x:Name="p10" Content="+10" FontSize="18" Width="40" Margin="4,4,4,4"/>
+                    <local:OtherButton x:Name="p1" Content="+1" FontSize="18" Width="40" Margin="4,4,4,4" Click="popupBtn_Click"/>
+                    <local:OtherButton x:Name="p5" Content="+5" FontSize="18" Width="40" Margin="4,4,4,4" Click="popupBtn_Click"/>
+                    <local:OtherButton x:Name="p10" Content="+10" FontSize="18" Width="40" Margin="4,4,4,4" Click="popupBtn_Click"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <local:OtherButton x:Name="m1" Content="-1"  FontSize="18" Width="40" Margin="4,4,4,4"/>
-                    <local:OtherButton x:Name="m5" Content="-5" FontSize="18" Width="40" Margin="4,4,4,4"/>
-                    <local:OtherButton x:Name="m10" Content="-10" FontSize="18" Width="40" Margin="4,4,4,4"/>
+                    <local:OtherButton x:Name="m1" Content="-1"  FontSize="18" Width="40" Margin="4,4,4,4" Click="popupBtn_Click"/>
+                    <local:OtherButton x:Name="m5" Content="-5" FontSize="18" Width="40" Margin="4,4,4,4" Click="popupBtn_Click"/>
+                    <local:OtherButton x:Name="m10" Content="-10" FontSize="18" Width="40" Margin="4,4,4,4" Click="popupBtn_Click"/>
                 </StackPanel>
             </StackPanel>
         </Popup>
-        <Label x:Name="label_Copy" Content="Bid(売注文)" Margin="22,107,0,0" FontSize="18" HorizontalAlignment="Left" Width="126" Height="34" VerticalAlignment="Top"/>
-        <local:SellButton x:Name="sellBtn"  Margin="22,141,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" RenderTransformOrigin="0.526,0.546" Width="126" Height="67" >
+        <Label x:Name="label_Copy" Content="Bid(売注文)" Margin="20,107,0,0" FontSize="18" HorizontalAlignment="Left" Width="126" Height="34" VerticalAlignment="Top"/>
+        <local:SellButton x:Name="sellBtn"  Margin="20,141,0,0" 
+                          VerticalAlignment="Top" HorizontalAlignment="Left" 
+                          FontSize="18" RenderTransformOrigin="0.526,0.546" Width="120" Height="67" Click="sellBtn_Click" >
             <TextBlock TextAlignment="Right">
                 <Span FontSize="16" Foreground="White"><Underline>SELL</Underline></Span>
             <LineBreak /><!-- 改行もできます -->
             105.<Span FontSize="24" Foreground="Black">67</Span>9
             </TextBlock>
         </local:SellButton>
-        <local:BuyButton x:Name="buyBtn" Margin="214,141,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" RenderTransformOrigin="0.526,0.546" Width="126" Height="67" >
+        <local:BuyButton x:Name="buyBtn" Margin="220,141,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" RenderTransformOrigin="0.526,0.546" Width="120" Height="67" >
             <TextBlock TextAlignment="Left">
                 <Span FontSize="16" Foreground="White"><Underline>Buy</Underline></Span>
             <LineBreak /><!-- 改行もできます -->
@@ -45,19 +45,19 @@
 
         </local:BuyButton>
         <Label x:Name="label_Copy1" Content="Ask(買注文)" Margin="236,107,0,0" FontSize="18" HorizontalAlignment="Left" Width="104" Height="34" VerticalAlignment="Top"/>
-        <Border  Margin="0,134,0,0"  HorizontalAlignment="Center" Width="56" Height="74" VerticalAlignment="Top" >
+        <Border  Margin="150,134,0,0"  HorizontalAlignment="Left" Width="56" Height="74" VerticalAlignment="Top" Grid.Column="1" >
             <TextBlock x:Name="spreadTbk" VerticalAlignment="Center" FontSize="18" HorizontalAlignment="Center" TextAlignment="Center"  >
             Spread<LineBreak />
             1000
             </TextBlock>
         </Border>
-        <Label x:Name="label_Copy2" Content="取引通貨" Margin="21,10,0,0" FontSize="18" HorizontalAlignment="Left" Width="155" Height="34" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy2" Content="取引通貨" Margin="21,10,0,0" FontSize="18" HorizontalAlignment="Left" Width="155" Height="34" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <local:OtherButton x:Name="closeAllBtn" HorizontalAlignment="Left" Margin="22,226,0,0" VerticalAlignment="Top" FontSize="18" Height="60" Width="76">
             <TextBlock TextAlignment="Center"  >
                 <Span  Foreground="White">全通貨</Span><LineBreak /><Span  Foreground="White">決済</Span>
             </TextBlock>
         </local:OtherButton>
-        <local:OtherButton x:Name="closeAllBtn_Copy" Margin="0,226,20,0" VerticalAlignment="Top" FontSize="18" Height="60" HorizontalAlignment="Right" Width="76">
+        <local:OtherButton x:Name="closeAllBtn_Copy" Margin="264,226,0,0" VerticalAlignment="Top" FontSize="18" Height="60" HorizontalAlignment="Left" Width="76">
             <TextBlock TextAlignment="Center"  ><Span  Foreground="White"><Run Text="選択通貨"/></Span><LineBreak /><Span  Foreground="White"><Run Text="決済"/></Span></TextBlock>
         </local:OtherButton>
 
@@ -75,24 +75,25 @@
                 </Canvas>
             </Viewbox>
         </local:OtherButton>
-        <TextBox x:Name="tpTbx" Margin="161,339,0,0" Text="50" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Width="50" Height="26"/>
+        <TextBox x:Name="tpTbx" Margin="138,338,0,0" Text="50" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Width="50" Height="26"/>
         <CheckBox x:Name="slCbx"  Margin="20,375,0,0" HorizontalAlignment="Left" Width="126" Height="27" VerticalAlignment="Top">
             <CheckBox.LayoutTransform>
                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
             </CheckBox.LayoutTransform>
             <TextBlock Text="SL(損切)"/>
         </CheckBox>
-        <Label Content="pips" Margin="218,335,0,0" FontSize="18" HorizontalAlignment="Left" Width="126" Height="34" VerticalAlignment="Top"/>
-        <TextBox x:Name="slTbx" Margin="161,373,0,0" Text="20" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Width="50" Height="26"/>
-        <CheckBox x:Name="tpCbx" Margin="20,341,0,0" HorizontalAlignment="Left" Width="126" Height="23" VerticalAlignment="Top">
+        <Label Content="pips" Margin="199,335,0,0" FontSize="18" HorizontalAlignment="Left" Width="126" Height="34" VerticalAlignment="Top" Grid.Column="1"/>
+        <TextBox x:Name="slTbx" Margin="138,373,0,0" Text="20" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" Width="50" Height="26" Grid.Column="1"/>
+        <CheckBox x:Name="tpCbx" Margin="20,341,0,0" HorizontalAlignment="Left" Width="79" Height="23" VerticalAlignment="Top">
             <CheckBox.LayoutTransform>
                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
             </CheckBox.LayoutTransform>
             <TextBlock Text="TP(利確)"/>
 
         </CheckBox>
-        <Label Content="pips" Margin="218,369,0,0" FontSize="18" Height="34" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+        <Label Content="pips" Margin="199,369,0,0" FontSize="18" Height="34" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
         <Label Content="注文時設定" Margin="22,302,0,0" FontSize="18" HorizontalAlignment="Left" Width="126" Height="34" VerticalAlignment="Top"/>
+        <TextBlock x:Name="mt4Status" HorizontalAlignment="Left" Margin="184,19,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top"/>
     </Grid>
 
 </Window>
