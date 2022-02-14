@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 namespace MQL4TradePanelW
 {
 
-    //referer https://blogs.jp.infragistics.com/entry/2019/06/28/182558
+    //References https://blogs.jp.infragistics.com/entry/2019/06/28/182558
 
     /// <summary>
     /// このカスタム コントロールを XAML ファイルで使用するには、手順 1a または 1b の後、手順 2 に従います。

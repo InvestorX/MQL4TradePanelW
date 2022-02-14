@@ -1,0 +1,1 @@
+g++ -shared -o MM0423.dll MemMap.cpp -Wl,-k -DUNICODE -static
