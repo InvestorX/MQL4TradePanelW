@@ -50,4 +50,5 @@ is worth it, you can buy me a **sushi 🍣** in return.
 
 # References
 [SOCKET LIBRARY FOR MT4 AND MT5](https://www.mql5.com/en/blogs/post/706665)
+
 [共有メモリ (メモリ マップト ファイル) を利用する (C#プログラミング)](https://www.ipentec.com/document/csharp-use-memory-mapped-file)
