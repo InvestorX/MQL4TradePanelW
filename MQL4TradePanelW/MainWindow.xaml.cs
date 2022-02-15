@@ -28,6 +28,7 @@ namespace MQL4TradePanelW
 
         TimerCallback timerDelegate;
         Timer timer;
+        MemoryMappedFile share_mem;
         public MainWindow()
         {
             InitializeComponent();
@@ -72,35 +73,55 @@ namespace MQL4TradePanelW
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             mt4Status.Text = "未連携";
-            Trace.WriteLine(getMemorryString(@"mtexe"));
-            Trace.WriteLine(getMemorryString(@"mtexe.array"));
-            if (getMemorryString(@"mtexe") != null)
+            Trace.WriteLine("mtexe:" + getMemorryString("mtexe") + ":");
+            Trace.WriteLine(getMemorryString("mtexe.array"));
+            String getSymbol = getMemorryString("mtexe").Trim().Replace("\0","");
+
+            share_mem = MemoryMappedFile.CreateNew("exemt.symbol", 256, MemoryMappedFileAccess.ReadWriteExecute);
+
+            if (getSymbol != null && getSymbol.Length > 0)
             {
                 timerDelegate = new TimerCallback(requestMTStatus);
                 timer = new Timer(timerDelegate, null, 0, 300);
                 statusBorder.Background = Brushes.LightGreen;
                 mt4Status.Text = "連携済み";
             }
-            if (getMemorryString(@"mtexe.array") != null)
+            if (getMemorryString("mtexe.array") != null && getMemorryString("mtexe.array").Length > 0)
             {
+                int selectedItem = 0;
+                int i = 0;
                 String[] sep = { "," };
                 String[] f = getMemorryString(@"mtexe.array").Split(sep, StringSplitOptions.RemoveEmptyEntries);
+                Trace.WriteLine("\r\nMT4通貨:" + getSymbol);
                 foreach (String str in f)
                 {
+                    if (str.IndexOf(getSymbol) > -1)
+                    {
+                        selectedItem = i;
+                    }
+                    else
+                    {
+                        i++;
+                    }
                     comboBox.Items.Add(str);
                 }
+
+                Trace.WriteLine("MT4側の選択されている通貨は？" + selectedItem);
+                comboBox.SelectedItem = selectedItem;
+                comboBox.Text = getSymbol;
             }
         }
 
         private void requestMTStatus(object state)
         {
-            try
+
+            this.Dispatcher.Invoke(() =>
             {
-                this.Dispatcher.Invoke(() =>
+                try
                 {
                     String val = getMemorryString(@"mtexe.value");
                     //Trace.WriteLine(val);
-
+                    textBlock.Text = val;
                     String[] sep = { "," };
                     String[] sep2 = { "." };
                     String[] str = val.Split(sep, StringSplitOptions.RemoveEmptyEntries);
@@ -108,6 +129,10 @@ namespace MQL4TradePanelW
                     //Trace.WriteLine(str[0]+","+str[1]);
                     String[] bid = str[0].Split(sep2, StringSplitOptions.RemoveEmptyEntries);
                     String[] ask = str[1].Split(sep2, StringSplitOptions.RemoveEmptyEntries);
+
+                    int digits = int.Parse(str[2].Replace("\0", ""));
+                    digits = digits - 3 < 0 ? 0 : digits - 3;
+                    int index = str[0].IndexOf(".");
 
                     selltextBlock.Text = "";
                     Underline underline = new Underline();
@@ -120,13 +145,13 @@ namespace MQL4TradePanelW
 
                     this.selltextBlock.Inlines.Add(underline);
                     selltextBlock.TextAlignment = TextAlignment.Right;
-
-                    this.selltextBlock.Inlines.Add(bid[0] + ".");
+                    this.selltextBlock.Inlines.Add(bid[0] + "." + bid[1].Substring(0, digits));
                     run = new Run();
-                    run.Text = bid[1].Substring(0, 2);
+                    run.Text = bid[1].Substring(digits, 2);
                     run.FontSize = 24;
                     this.selltextBlock.Inlines.Add(run);
-                    this.selltextBlock.Inlines.Add(bid[1].Substring(2, int.Parse(str[2])-2));
+                    //int qr = digits - 2;
+                    this.selltextBlock.Inlines.Add(bid[1].Substring(digits + 2, 1));
                     sellBtn.Content = selltextBlock;
 
                     //buyの処理
@@ -142,21 +167,28 @@ namespace MQL4TradePanelW
                     this.buytextBlock.Inlines.Add(underline2);
                     buytextBlock.TextAlignment = TextAlignment.Left;
 
-                    this.buytextBlock.Inlines.Add(ask[0] + ".");
+                    this.buytextBlock.Inlines.Add(ask[0] + "." + ask[1].Substring(0, digits));
                     run2 = new Run();
-                    run2.Text = ask[1].Substring(0, 2);
+                    run2.Text = ask[1].Substring(digits, 2);
                     run2.FontSize = 24;
                     this.buytextBlock.Inlines.Add(run2);
-                    this.buytextBlock.Inlines.Add(ask[1].Substring(2, int.Parse(str[2]) - 2));
+                    this.buytextBlock.Inlines.Add(ask[1].Substring(digits + 2, 1));
                     buyBtn.Content = buytextBlock;
 
+                    spreadTbk.Text = "";
+                    Run run3 = new Run();
+                    run3.Text = "Spread\n" + str[3];
+                    run3.FontSize = 18;
+                    this.spreadTbk.Inlines.Add(run3);
+                    this.spreadTbk.TextAlignment = TextAlignment.Center;
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(ex.ToString());
+                }
 
-                });
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex.ToString());
-            }
+            });
+
         }
 
         private String getMemorryString(String TAG)
@@ -188,18 +220,61 @@ namespace MQL4TradePanelW
         private void setMemorryString(String TAG, String msg)
         {
             // Open shared memory
-            MemoryMappedFile share_mem = MemoryMappedFile.CreateNew(TAG, 1024);
-            MemoryMappedViewAccessor accessor = share_mem.CreateViewAccessor();
+            MemoryMappedFile share_mem2 = MemoryMappedFile.CreateNew(TAG, 256);
+            MemoryMappedViewAccessor accessor = share_mem2.CreateViewAccessor();
 
             // Write data to shared memory
             string str = msg;
             char[] data = str.ToCharArray();
             accessor.Write(0, data.Length);
-            accessor.WriteArray<char>(sizeof(int), data, 0, data.Length);
+            accessor.WriteArray<char>(0, data, 0, data.Length);
 
             // Dispose accessor
             accessor.Dispose();
         }
 
+        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            popupLots.IsOpen = false;
+            String msg = ((ComboBox)sender).SelectedItem.ToString().Trim();
+            Trace.WriteLine(msg);
+            //setMemorryString("exemt.symbol", msg);
+
+
+            MemoryMappedViewAccessor accessor = share_mem.CreateViewAccessor();
+
+            // Write data to shared memory
+            char[] data = msg.ToCharArray();
+            accessor.Write(0, data.Length);
+            accessor.WriteArray<char>(0, data, 0, data.Length);
+
+            // Dispose accessor
+            accessor.Dispose();
+            //SetMemString("exemt.symbol", ((ComboBox)sender).SelectedItem.ToString().Trim());
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+
+            Trace.WriteLine(getMemorryString("exemt.symbol"));
+        }
+
+        private void gamenButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.mainWindow.Topmost = !this.mainWindow.Topmost;
+            if (this.mainWindow.Topmost)
+            {
+                //this.gamenButton.Background = Brushes.Red;
+                fillR.Fill = Brushes.Red;
+            }
+            else
+            {
+                //Color b = Color.FromArgb(0xFF, 0xBB, 0xBB, 0xBB);
+
+
+                // this.gamenButton.Background = new SolidColorBrush(b);
+                fillR.Fill = Brushes.White;
+            }
+        }
     }
 }

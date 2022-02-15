@@ -48,7 +48,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="btnBorder2" Property="Background" Value="#FFA2C7E6"/>
+                            <Setter TargetName="btnBorder2" Property="Background" Value="#FF8EBEE6"/>
                             <Setter TargetName="btnBorder2" Property="Effect">
                                 <Setter.Value>
                                     <DropShadowEffect 
