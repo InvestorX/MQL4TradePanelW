@@ -53,12 +53,12 @@
             </TextBlock>
         </Border>
         <Label x:Name="label_Copy2" Content="取引通貨" Margin="21,10,0,0" FontSize="18" HorizontalAlignment="Left" Width="155" Height="34" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <local:OtherButton x:Name="closeAllBtn" HorizontalAlignment="Left" Margin="22,226,0,0" VerticalAlignment="Top" FontSize="18" Height="60" Width="76">
+        <local:OtherButton x:Name="closeAllBtn" HorizontalAlignment="Left" Margin="22,226,0,0" VerticalAlignment="Top" FontSize="18" Height="60" Width="76" Click="closeAllBtn_Click">
             <TextBlock TextAlignment="Center"  >
                 <Span  Foreground="White">全通貨</Span><LineBreak /><Span  Foreground="White">決済</Span>
             </TextBlock>
         </local:OtherButton>
-        <local:OtherButton x:Name="closeAllBtn_Copy" Margin="264,226,0,0" VerticalAlignment="Top" FontSize="18" Height="60" HorizontalAlignment="Left" Width="76">
+        <local:OtherButton x:Name="closeSelBtn" Margin="264,226,0,0" VerticalAlignment="Top" FontSize="18" Height="60" HorizontalAlignment="Left" Width="76">
             <TextBlock TextAlignment="Center"  ><Span  Foreground="White"><Run Text="選択通貨"/></Span><LineBreak /><Span  Foreground="White"><Run Text="決済"/></Span></TextBlock>
         </local:OtherButton>
 

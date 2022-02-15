@@ -29,6 +29,7 @@ namespace MQL4TradePanelW
         TimerCallback timerDelegate;
         Timer timer;
         MemoryMappedFile share_mem;
+        MemoryMappedFile shareMemOrder;
         public MainWindow()
         {
             InitializeComponent();
@@ -43,14 +44,14 @@ namespace MQL4TradePanelW
 
         private void lots_PreviewMouseDown(object sender, RoutedEventArgs e)
         {
-            Trace.WriteLine("PreviewMouseDown lotsがクリックされた気がする");
+            //Trace.WriteLine("PreviewMouseDown lotsがクリックされた気がする");
             //popupLots.IsOpen = !popupLots.IsOpen;
 
         }
 
         private void lots_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            Trace.WriteLine("PreviewMouseUP lotsがクリックされた気がする");
+            //Trace.WriteLine("PreviewMouseUP lotsがクリックされた気がする");
             popupLots.IsOpen = !popupLots.IsOpen;
 
         }
@@ -79,6 +80,9 @@ namespace MQL4TradePanelW
 
             share_mem = MemoryMappedFile.CreateNew("exemt.symbol", 256, MemoryMappedFileAccess.ReadWriteExecute);
 
+            shareMemOrder = MemoryMappedFile.CreateNew("exemt.order", 256, MemoryMappedFileAccess.ReadWriteExecute);
+
+
             if (getSymbol != null && getSymbol.Length > 0)
             {
                 timerDelegate = new TimerCallback(requestMTStatus);
@@ -106,7 +110,7 @@ namespace MQL4TradePanelW
                     comboBox.Items.Add(str);
                 }
 
-                Trace.WriteLine("MT4側の選択されている通貨は？" + selectedItem);
+                //Trace.WriteLine("MT4側の選択されている通貨は？" + selectedItem);
                 comboBox.SelectedItem = selectedItem;
                 comboBox.Text = getSymbol;
             }
@@ -275,6 +279,11 @@ namespace MQL4TradePanelW
                 // this.gamenButton.Background = new SolidColorBrush(b);
                 fillR.Fill = Brushes.White;
             }
+        }
+
+        private void closeAllBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
