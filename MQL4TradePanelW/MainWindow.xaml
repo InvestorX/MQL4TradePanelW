@@ -37,7 +37,7 @@
             105.<Span FontSize="24" Foreground="Black">67</Span>9
             </TextBlock>
         </local:SellButton>
-        <local:BuyButton x:Name="buyBtn" Margin="220,141,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" RenderTransformOrigin="0.526,0.546" Width="120" Height="67" >
+        <local:BuyButton x:Name="buyBtn" Margin="220,141,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" RenderTransformOrigin="0.526,0.546" Width="120" Height="67" Click="buyBtn_Click" >
             <TextBlock x:Name="buytextBlock" TextAlignment="Left">
                 <Span FontSize="16" Foreground="White"><Underline>Buy</Underline></Span>
             <LineBreak /><!-- 改行もできます -->

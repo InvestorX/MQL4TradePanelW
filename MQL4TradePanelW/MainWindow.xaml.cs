@@ -30,6 +30,9 @@ namespace MQL4TradePanelW
         Timer timer;
         MemoryMappedFile share_mem;
         MemoryMappedFile shareMemOrder;
+        String pullTAG = "mtexe";
+        String pushTAG = "exemt";
+        bool orderFlag;
         public MainWindow()
         {
             InitializeComponent();
@@ -56,9 +59,54 @@ namespace MQL4TradePanelW
 
         }
 
+        private void buyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            int tp;
+            int sl;
+            double lot;
+            tp = (bool)(tpCbx.IsChecked) ? int.Parse(tpTbx.Text) : 0;
+            sl = (bool)(slCbx.IsChecked) ? int.Parse(slTbx.Text) : 0;
+            lot = double.Parse(lots.Text);
+            MemoryMappedViewAccessor accessor = shareMemOrder.CreateViewAccessor();
+            // buyは0
+            // Write data to shared memory
+            string str = "0," + lot + ",,," + sl + "," + tp + ",PANEL," + (DateTime.Now).Millisecond;
+            //Trace.WriteLine(str);
+            char[] data = str.ToCharArray();
+            accessor.Write(0, data.Length);
+            accessor.WriteArray<char>(0, data, 0, data.Length);
+
+            // Dispose accessor
+            accessor.Dispose();
+
+            //setMemorryString(pushTAG + ".order", str);
+            orderFlag = true;
+        }
+
         private void sellBtn_Click(object sender, RoutedEventArgs e)
         {
+            //int RequestOrder(string mySymbol,int orderSB,double lot,double value,double sp,double SL,double TP,string comment,int mgno,int orderLimit,color orderColor)
+            //Trace.WriteLine("SELL button");
+            int tp;
+            int sl;
+            double lot;
+            tp = (bool)(tpCbx.IsChecked) ? int.Parse(tpTbx.Text) : 0;
+            sl = (bool)(slCbx.IsChecked) ? int.Parse(slTbx.Text) : 0;
+            lot = double.Parse(lots.Text);
+            MemoryMappedViewAccessor accessor = shareMemOrder.CreateViewAccessor();
+            // sellは1
+            // Write data to shared memory
+            string str = "1," + lot + ",,," + sl + "," + tp + ",PANEL,"+(DateTime.Now).Millisecond+",";
+            //Trace.WriteLine(str);
+            char[] data = str.ToCharArray();
+            accessor.Write(0, data.Length);
+            accessor.WriteArray<char>(0, data, 0, data.Length);
 
+            // Dispose accessor
+            accessor.Dispose();
+
+            //setMemorryString(pushTAG + ".order", str);
+            orderFlag = true;
         }
 
         private void popupBtn_Click(object sender, RoutedEventArgs e)
@@ -73,29 +121,30 @@ namespace MQL4TradePanelW
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            orderFlag = false;
             mt4Status.Text = "未連携";
-            Trace.WriteLine("mtexe:" + getMemorryString("mtexe") + ":");
-            Trace.WriteLine(getMemorryString("mtexe.array"));
-            String getSymbol = getMemorryString("mtexe").Trim().Replace("\0","");
+            Trace.WriteLine("mtexe:" + getMemorryString(pullTAG) + ":");
+            Trace.WriteLine(getMemorryString(pullTAG+".array"));
+            String getSymbol = getMemorryString("mtexe").Trim().Replace("\0", "");
 
-            share_mem = MemoryMappedFile.CreateNew("exemt.symbol", 256, MemoryMappedFileAccess.ReadWriteExecute);
+            share_mem = MemoryMappedFile.CreateNew(pushTAG+".symbol", 256, MemoryMappedFileAccess.ReadWriteExecute);
 
-            shareMemOrder = MemoryMappedFile.CreateNew("exemt.order", 256, MemoryMappedFileAccess.ReadWriteExecute);
+            shareMemOrder = MemoryMappedFile.CreateOrOpen(pushTAG+".order", 256, MemoryMappedFileAccess.ReadWriteExecute);
 
 
             if (getSymbol != null && getSymbol.Length > 0)
             {
                 timerDelegate = new TimerCallback(requestMTStatus);
-                timer = new Timer(timerDelegate, null, 0, 300);
+                timer = new Timer(timerDelegate, null, 0, 200);
                 statusBorder.Background = Brushes.LightGreen;
                 mt4Status.Text = "連携済み";
             }
-            if (getMemorryString("mtexe.array") != null && getMemorryString("mtexe.array").Length > 0)
+            if (getMemorryString(pullTAG+ ".array") != null && getMemorryString(pullTAG +".array").Length > 0)
             {
                 int selectedItem = 0;
                 int i = 0;
                 String[] sep = { "," };
-                String[] f = getMemorryString(@"mtexe.array").Split(sep, StringSplitOptions.RemoveEmptyEntries);
+                String[] f = getMemorryString(pullTAG+".array").Split(sep, StringSplitOptions.RemoveEmptyEntries);
                 Trace.WriteLine("\r\nMT4通貨:" + getSymbol);
                 foreach (String str in f)
                 {
@@ -123,7 +172,30 @@ namespace MQL4TradePanelW
             {
                 try
                 {
-                    String val = getMemorryString(@"mtexe.value");
+                    //
+                    String orderEnable = getMemorryString(pullTAG + ".order");
+                    orderEnable = orderEnable.Replace("\0", "");
+                    if (orderEnable.Length > 0)
+                    {
+                        if (orderFlag)
+                        {
+                            Trace.WriteLine("o:" + orderEnable);
+                            MemoryMappedViewAccessor accessor = shareMemOrder.CreateViewAccessor();
+                            // sellは1
+                            // Write data to shared memory
+                            string orderStr = "";
+                            char[] data = orderStr.ToCharArray();
+                            accessor.Write(0, data.Length);
+                            accessor.WriteArray<char>(0, data, 0, data.Length);
+
+                            // Dispose accessor
+                            accessor.Dispose();
+                            orderFlag = !orderFlag;
+                        }
+                    }
+
+
+                    String val = getMemorryString(pullTAG+".value");
                     //Trace.WriteLine(val);
                     textBlock.Text = val;
                     String[] sep = { "," };
@@ -185,6 +257,9 @@ namespace MQL4TradePanelW
                     run3.FontSize = 18;
                     this.spreadTbk.Inlines.Add(run3);
                     this.spreadTbk.TextAlignment = TextAlignment.Center;
+
+
+
                 }
                 catch (Exception ex)
                 {
@@ -224,7 +299,7 @@ namespace MQL4TradePanelW
         private void setMemorryString(String TAG, String msg)
         {
             // Open shared memory
-            MemoryMappedFile share_mem2 = MemoryMappedFile.CreateNew(TAG, 256);
+            MemoryMappedFile share_mem2 = MemoryMappedFile.CreateOrOpen(TAG, 256);
             MemoryMappedViewAccessor accessor = share_mem2.CreateViewAccessor();
 
             // Write data to shared memory
@@ -285,5 +360,6 @@ namespace MQL4TradePanelW
         {
 
         }
+
     }
 }
